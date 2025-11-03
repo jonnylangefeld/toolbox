@@ -18,11 +18,10 @@ RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --d
     apt-get update && \
     apt-get install -y kubectl
 
-RUN curl https://baltocdn.com/helm/signing.asc | apt-key add - && \
-    apt-get install apt-transport-https --yes && \
-    echo "deb https://baltocdn.com/helm/stable/debian/ all main" | tee /etc/apt/sources.list.d/helm-stable-debian.list && \
-    apt-get update && \
-    apt-get install helm
+RUN ARCH=$(uname -m | sed 's/x86_64/amd64/' | sed 's/aarch64/arm64/') && \
+    curl -fsSL https://get.helm.sh/helm-v3.16.2-linux-${ARCH}.tar.gz | tar -xz && \
+    mv linux-${ARCH}/helm /usr/local/bin/helm && \
+    rm -rf linux-${ARCH}
 
 RUN BIN="/usr/local/bin" && \
     VERSION="1.56.0" && \
